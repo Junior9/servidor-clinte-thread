@@ -1,10 +1,11 @@
 package alura.thread2.cliente;
 
 import java.io.IOException;
-import java.io.PrintStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.Scanner;
+
+import alura.thread2.cliente.thread.EnviaComando;
+import alura.thread2.cliente.thread.RecebeComando;
 
 /**
 * Cliente  
@@ -19,14 +20,17 @@ public class ClienteTarefa {
 		
 		Socket clienteSocket = new Socket("localhost",12345);
 		System.out.println("Conexão estabelecida");
-		PrintStream saida = new PrintStream(clienteSocket.getOutputStream());
-		saida.println("C1");
 		
-		Scanner teclado = new Scanner(System.in);
-
-		teclado.close();
-		saida.close();
-		clienteSocket.close();		
+		Thread threadEnviaComando = new Thread(new EnviaComando(clienteSocket));
+		Thread threadRecebeResposta = new Thread(new RecebeComando(clienteSocket));
+		
+		threadEnviaComando.start();
+		threadRecebeResposta.start();
+		try {
+			threadEnviaComando.join();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

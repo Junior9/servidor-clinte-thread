@@ -18,6 +18,10 @@ public abstract class Comando implements Callable<String>{
 	}
 	
 	abstract String mensagem();
+	
+	public void msgForUser(String msg){
+		this.saidaComando.println(msg);
+	}
 
 	@Override
 	public String call() {

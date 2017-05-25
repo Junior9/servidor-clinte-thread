@@ -6,6 +6,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+
 import alura.thread2.servidor.thread.annotation.Nome;
 import alura.thread2.servidor.thread.comando.Comando;
 
@@ -14,12 +15,10 @@ public class ResultadoFuturo implements Callable<Void> {
 	private String resultado;
 	private ExecutorService threadPool;
 	private Comando comando;
-	private PrintStream saidaComando;
 	
-	public ResultadoFuturo(ExecutorService threadPool,PrintStream saidaComando, Comando comando) {
+	public ResultadoFuturo(ExecutorService threadPool, Comando comando) {
 		this.comando = comando;
 		this.threadPool = threadPool;
-		this.saidaComando = saidaComando;
 	}
 
 	@Override
@@ -33,17 +32,16 @@ public class ResultadoFuturo implements Callable<Void> {
 		}
 		
 		if(nomeAnnotation != null){
-		  saidaComando.println(nomeAnnotation.nome());
+		  comando.msgForUser(nomeAnnotation.nome());
 		}else{
-		  saidaComando.println("Processando comando");
+		  comando.msgForUser("Processando comando");
 		}
 	  
 	  Future<String> resultadoFuturo = threadPool.submit(comando);
-		saidaComando.println("....");
+	    comando.msgForUser(".....");
 		resultado = resultadoFuturo.get();
 		//Fazer algo com o retorno do comando
-		
-		saidaComando.println("Finalizando comando");
+		comando.msgForUser("Finalizando comando");
 		return null;
 	}
 

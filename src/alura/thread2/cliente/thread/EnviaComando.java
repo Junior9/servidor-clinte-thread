@@ -17,13 +17,14 @@ public class EnviaComando implements Runnable{
 	public void run() {
 		try {
 			PrintStream saida = new PrintStream(clienteSocket.getOutputStream());
-			String linhaThread="";
+			String comandoEnviado="";
 			Scanner teclado = new Scanner(System.in);
 			while(teclado.hasNext()){
-				linhaThread  = teclado.nextLine();
-				if(!"".equals(linhaThread)){
-					saida.println(linhaThread);
+			  comandoEnviado  = teclado.nextLine();
+				if(!"fim".equals(comandoEnviado)){
+					saida.println(comandoEnviado);
 				}else{
+				  System.out.println("Finalizando tarefas");
 					break;				
 				}
 			}

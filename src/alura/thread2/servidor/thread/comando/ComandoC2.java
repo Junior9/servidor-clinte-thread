@@ -6,7 +6,7 @@ import alura.thread2.servidor.thread.annotation.Nome;
 
 public class ComandoC2 extends Comando {
 
-	@Nome(nome="Comando C2")
+	@Nome(nome="Ping WebServe ....")
 	public ComandoC2(PrintStream saidaComando) {
 		super(saidaComando);
 	}
@@ -14,7 +14,7 @@ public class ComandoC2 extends Comando {
 	@Override
 	String mensagem() {
 		//throw new RuntimeException("Erro porra");
-		return "Comando C2 executado ...";
+		return "web service is on...";
 	}
 
 }

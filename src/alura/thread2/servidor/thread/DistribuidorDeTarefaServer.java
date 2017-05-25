@@ -2,23 +2,19 @@ package alura.thread2.servidor.thread;
 
 import java.io.IOException;
 import java.io.PrintStream;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
-
-import alura.thread2.servidor.ServidorTarefa;
-import alura.thread2.servidor.thread.comando.ComandoC1;
-import alura.thread2.servidor.thread.comando.ComandoC2;
-import alura.thread2.servidor.thread.comando.ComandoC3;
+import alura.thread2.servidor.thread.comando.Comando;
 
 public class DistribuidorDeTarefaServer implements Runnable {
 
-	private ServidorTarefa st;
 	private Socket socketServer;
 	private ExecutorService threadPool;
 	
-	public DistribuidorDeTarefaServer(ServidorTarefa st, Socket socketServer, ExecutorService threadPool) {
-		this.st = st;
+	public DistribuidorDeTarefaServer( Socket socketServer, ExecutorService threadPool) {
 		this.socketServer = socketServer;
 		this.threadPool = threadPool;
 	}
@@ -31,48 +27,32 @@ public class DistribuidorDeTarefaServer implements Runnable {
 			saidaComando = new PrintStream(socketServer.getOutputStream());
 			entradaCliente = new Scanner(socketServer.getInputStream());
 			System.out.println("To rodando: " + socketServer.getPort());
+			
 			while(entradaCliente.hasNextLine()){
+				try {
+				  
+    				String comando = entradaCliente.nextLine();
+    				Class<?> classComand =  Class.forName("alura.thread2.servidor.thread.comando.Comando"+comando);
+    				Constructor<?> contrutorDeComando =  classComand.getConstructor(PrintStream.class);
+    				Comando co = (Comando) contrutorDeComando.newInstance(saidaComando);
+    				threadPool.submit(new ResultadoFuturo(threadPool,saidaComando,co));
+    				
+				} catch (ClassNotFoundException e1) {
+					e1.printStackTrace();
+				} catch (NoSuchMethodException e) {
+          e.printStackTrace();
+        } catch (SecurityException e) {
+          e.printStackTrace();
+        } catch (InstantiationException e) {
+          e.printStackTrace();
+        } catch (IllegalAccessException e) {
+          e.printStackTrace();
+        } catch (IllegalArgumentException e) {
+          e.printStackTrace();
+        } catch (InvocationTargetException e) {
+          e.printStackTrace();
+        }
 				
-//				try {
-//				
-//					assertEquals(true, c.isAssignableFrom(ComandoC1.class));
-//					
-//					
-//					String comando = entradaCliente.nextLine();
-//					Class<?> c =  Class.forName("alura.thread2.servidor.thread.comando.Comando"+comando);
-//					c.con
-//					Future<String > fuj= threadPool.submit(new ComandoC1(saidaCliente));
-//
-//				
-//				
-//				
-//				
-//				} catch (ClassNotFoundException e1) {
-//					// TODO Auto-generated catch block
-//					e1.printStackTrace();
-//				}
-//				
-//				
-				//==================================================================================//
-				
-				
-				switch (entradaCliente.nextLine()) {
-				case "C1":
-						threadPool.submit(new ResultadoFuturo(threadPool,saidaComando,new ComandoC1(saidaComando)));
-					break;
-				case "C2":
-						threadPool.submit(new ResultadoFuturo(threadPool,saidaComando,new ComandoC2(saidaComando)));
-					break;
-				case "C3":
-						threadPool.submit(new ResultadoFuturo(threadPool,saidaComando,new ComandoC3(saidaComando)));
-					break;
-				case "fim":
-					st.stop();
-					break;
-				default:
-					saidaComando.println("Comando não encontrado");					
-					break;
-				}
 			}
 			entradaCliente.close();
 		} catch (IOException e) {

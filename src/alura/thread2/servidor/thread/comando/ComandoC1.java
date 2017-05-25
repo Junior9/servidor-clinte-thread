@@ -7,14 +7,14 @@ import alura.thread2.servidor.thread.annotation.Nome;
 
 public class ComandoC1 extends Comando{
 
-	@Nome(nome="Comando C1")
+	@Nome(nome="Atualizando banco de dados....")
 	public ComandoC1(PrintStream saidaComando) {
 		super(saidaComando);
 	}
 
 	@Override
 	String mensagem() {
-		return "Comando C1 executado";
+		return "update data server.......";
 	}
 
 }

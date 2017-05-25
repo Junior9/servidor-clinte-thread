@@ -37,7 +37,7 @@ public class ServidorTarefa {
 			
 				System.out.println("Conectando o cliente na porta: "+ socketServer.getPort() );
 				
-				threadPool.execute(new DistribuidorDeTarefaServer(this, socketServer,threadPool));
+				threadPool.execute(new DistribuidorDeTarefaServer(socketServer,threadPool));
 			
 			} catch (IOException e1) {
 				if(!isUpServer.get())

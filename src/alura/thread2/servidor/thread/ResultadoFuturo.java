@@ -1,11 +1,11 @@
 package alura.thread2.servidor.thread;
 
 import java.io.PrintStream;
+import java.lang.reflect.Constructor;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
-
 import alura.thread2.servidor.thread.annotation.Nome;
 import alura.thread2.servidor.thread.comando.Comando;
 
@@ -23,24 +23,27 @@ public class ResultadoFuturo implements Callable<Void> {
 	}
 
 	@Override
-	public Void call() throws InterruptedException, ExecutionException {
+	public Void call() throws InterruptedException, ExecutionException, NoSuchMethodException, SecurityException {
 		
-	/*	
-	 * 
-	 * 
-		Class c = comando.getClass();
-		if(c.isAnnotation()){
-			String cd = c.getAnnotation(Nome.class).toString();
-			System.out.println("Annotation "+cd);
+	  Class<?> classComando = comando.getClass();
+		Constructor<?> construtor =  classComando.getConstructor(PrintStream.class); 
+		Nome nomeAnnotation = null;
+		if(construtor.isAnnotationPresent(Nome.class)){
+		  nomeAnnotation = (Nome) construtor.getAnnotation(Nome.class);
 		}
-		*/
 		
-		System.out.println("Processando comando C1");
-		Future<String> resultadoFuturo = threadPool.submit(comando);
+		if(nomeAnnotation != null){
+		  saidaComando.println(nomeAnnotation.nome());
+		}else{
+		  saidaComando.println("Processando comando");
+		}
+	  
+	  Future<String> resultadoFuturo = threadPool.submit(comando);
 		saidaComando.println("....");
 		resultado = resultadoFuturo.get();
-		//Thread.sleep(10000);
-		saidaComando.println("Finalizando comando : " + resultado);
+		//Fazer algo com o retorno do comando
+		
+		saidaComando.println("Finalizando comando");
 		return null;
 	}
 
